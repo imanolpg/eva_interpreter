@@ -1,0 +1,39 @@
+##########################
+# Application specfic
+##########################
+# config/config.js
+
+##########################
+# General
+##########################
+
+#####
+# OS X temporary files
+#
+.DS_Store
+.Trashes
+*.swp
+
+#####
+# Node stuff
+#
+logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# Coverage directory used by tools like istanbul
+coverage
+
+.grunt
+
+.lock-wscript
+
+build/Release
+
+# Dependency directory
+node_modules
