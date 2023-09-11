@@ -4,7 +4,7 @@
   "description": "",
   "main": "Eva.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node __tests__/run.js"
   },
   "author": "",
   "license": "ISC",
