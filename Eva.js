@@ -80,6 +80,20 @@ class Eva {
     }
 
     // --------------------------------------------
+    // Function declaration:
+    if (exp[0] === 'def') {
+      const [_tag, name, params, body] = exp;
+
+      const fn = {
+        params,
+        body,
+        env
+      };
+
+      return env.define(name, fn);
+    }
+
+    // --------------------------------------------
     // Function calls:
     if (Array.isArray(exp)) {
       const fn = this.eval(exp[0], env);
@@ -91,12 +105,26 @@ class Eva {
       }
 
       // 2. User-defined functions:
+      const activationRecord = {};
+      fn.params.forEach((param, index) => {
+        activationRecord[param] = args[index];
+      });
 
+      const activationEnvironment = new Environment(activationRecord, fn.env);
+      
+      return this._evalBody(fn.body, activationEnvironment);
     }
 
     // --------------------------------------------
     // Unimplemented:
     throw `Unimplemented: ${JSON.stringify(exp)}`;
+  }
+
+  _evalBody(body, env) {
+    if (body[0] === 'begin') {
+      return this._evalBlock(body, env);
+    }
+    return this.eval(body, env);
   }
 
   _evalBlock(block, env) {

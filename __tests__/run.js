@@ -7,13 +7,14 @@ const tests = [
   require('./block-tests'),
   require('./if-tests'),
   require('./while-test'),
-  require('./built-in-function-test')
+  require('./built-in-function-test'),
+  require('./user-defined-functions-tests')
 ]
 
 const eva = new Eva();
 
 tests.forEach(test => test(eva));
 
-eva.eval(['print', '"Hello"', '" "', '"world!"']);
+eva.eval(['print', '"Hello"', '"world!"']);
 
 console.log("All assertions passed!!");
