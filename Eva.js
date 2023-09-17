@@ -84,13 +84,22 @@ class Eva {
     if (exp[0] === 'def') {
       const [_tag, name, params, body] = exp;
 
-      const fn = {
+      // JIT-transpile toa variable declaration
+      const varExp = ['var', name, ['lambda', params, body]];
+
+      return this.eval(varExp, env);
+    }
+
+    // --------------------------------------------
+    // Lambda functions
+    if (exp[0] === 'lambda') {
+      const [_tag, params, body] = exp;
+
+      return {
         params,
         body,
         env
-      };
-
-      return env.define(name, fn);
+      }
     }
 
     // --------------------------------------------

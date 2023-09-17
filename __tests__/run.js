@@ -8,7 +8,8 @@ const tests = [
   require('./if-tests'),
   require('./while-test'),
   require('./built-in-function-test'),
-  require('./user-defined-functions-tests')
+  require('./user-defined-functions-tests'),
+  require('./lambda-function-test')
 ]
 
 const eva = new Eva();
