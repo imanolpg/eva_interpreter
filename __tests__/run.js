@@ -1,5 +1,4 @@
 const Eva = require('../Eva');
-const Environment = require('../Environment');
 
 const tests = [
   require('./self-eva-test'),
@@ -7,18 +6,14 @@ const tests = [
   require('./variables-tests'),
   require('./block-tests'),
   require('./if-tests'),
-  require('./while-test')
+  require('./while-test'),
+  require('./built-in-function-test')
 ]
 
-const eva = new Eva(new Environment({
-  null: null,
-
-  true: true,
-  false: false,
-
-  VERSION: '0.1'
-}));
+const eva = new Eva();
 
 tests.forEach(test => test(eva));
+
+eva.eval(['print', '"Hello"', '" "', '"world!"']);
 
 console.log("All assertions passed!!");
