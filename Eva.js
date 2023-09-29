@@ -1,5 +1,6 @@
 const assert = require('assert');
 const Environment = require('./Environment');
+const Transformer = require('./transform/Transformer');
 
 /**
  * Eva interpreter
@@ -11,6 +12,7 @@ class Eva {
    */
   constructor(global = GlobalEnvironment) {
     this.global = global;
+    this._transformer = new Transformer();
   }
 
   /**
@@ -82,12 +84,31 @@ class Eva {
     // --------------------------------------------
     // Function declaration:
     if (exp[0] === 'def') {
-      const [_tag, name, params, body] = exp;
-
       // JIT-transpile toa variable declaration
-      const varExp = ['var', name, ['lambda', params, body]];
+      const varExp = this._transformer.transformDefToVarLambda(exp);
 
       return this.eval(varExp, env);
+    }
+
+    // --------------------------------------------
+    // Switch expression:
+    if (exp[0] === 'switch') {
+      const ifExp = this._transformer.transformSwitchToIf(exp);
+      return this.eval(ifExp, env);
+    }
+
+    // --------------------------------------------
+    // For loop:
+    if (exp[0] === 'for') {
+      const whileExp = this._transformer.transformForToWhile(exp);
+      return this.eval(whileExp, env);
+    }
+
+    // --------------------------------------------
+    // ++ operator:
+    if (exp[0] === '++') {
+      const setExp = this._transformer.transformIncToSet(exp);
+      return this.eval(setExp, env);
     }
 
     // --------------------------------------------
