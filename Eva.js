@@ -50,8 +50,19 @@ class Eva {
     // --------------------------------------------
     // Variable set:
     if (exp[0] === 'set') {
-      const [_, name, value] = exp;
-      return env.assign(name, this.eval(value, env));
+      const [_, ref, value] = exp;
+
+      if (ref[0] === 'prop') {
+        const[ _tag, instance, propName] = ref;
+        const instanceEnv = this.eval(instance, env);
+
+        return instanceEnv.define(
+          propName,
+          this.eval(value, env)
+        );
+      }
+
+      return env.assign(ref, this.eval(value, env));
     }
 
     // --------------------------------------------
@@ -124,6 +135,47 @@ class Eva {
     }
 
     // --------------------------------------------
+    // Class declaration:
+    if (exp[0] === 'class') {
+      const [_tag, name, parent, body] = exp;
+
+      // get a parent environment for inheritance 
+      const parentEnv = this.eval(parent, env) || env;
+
+      // create the new class with the corresponding parent env
+      const classEnv = new Environment({}, parentEnv);
+      this._evalBody(body, classEnv);
+      
+      return env.define(name, classEnv);
+    }
+
+    // --------------------------------------------
+    // Class instantiation:
+    if (exp[0] === 'new') {
+
+      const classEnv = this.eval(exp[1], env);
+
+      // an instance of a class is an environment
+      const instanceEnv = new Environment({}, classEnv);
+
+      const args = exp.slice(2).map(arg => this.eval(arg, env));
+
+      this._callUserDefinedFunction(classEnv.lookup('constructor'),
+        [instanceEnv, ...args]);
+
+      return instanceEnv;
+    }
+
+    // --------------------------------------------
+    // Property access:
+    if (exp[0] === 'prop') {
+      const [_tag, instance, name] = exp;
+      const instanceEnv = this.eval(instance, env);
+      return instanceEnv.lookup(name);
+    }
+
+
+    // --------------------------------------------
     // Function calls:
     if (Array.isArray(exp)) {
       const fn = this.eval(exp[0], env);
@@ -135,19 +187,23 @@ class Eva {
       }
 
       // 2. User-defined functions:
-      const activationRecord = {};
-      fn.params.forEach((param, index) => {
-        activationRecord[param] = args[index];
-      });
-
-      const activationEnvironment = new Environment(activationRecord, fn.env);
-      
-      return this._evalBody(fn.body, activationEnvironment);
+      return this._callUserDefinedFunction(fn, args);
     }
 
     // --------------------------------------------
     // Unimplemented:
     throw `Unimplemented: ${JSON.stringify(exp)}`;
+  }
+
+  _callUserDefinedFunction(fn, args) {
+    const activationRecord = {};
+    fn.params.forEach((param, index) => {
+      activationRecord[param] = args[index];
+    });
+
+    const activationEnvironment = new Environment(activationRecord, fn.env);
+    
+    return this._evalBody(fn.body, activationEnvironment);
   }
 
   _evalBody(body, env) {
