@@ -11,7 +11,9 @@ const tests = [
   require('./user-defined-functions-tests'),
   require('./lambda-function-test'),
   require('./switch-test'),
-  require('./classes-test')
+  require('./classes-test'),
+  require('./module-test'),
+  require('./import-test')
 ]
 
 const eva = new Eva();

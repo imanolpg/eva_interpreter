@@ -1,4 +1,3 @@
-const assert = require('assert');
 const { test } = require('./test-util');
 
 module.exports = eva => {
@@ -22,19 +21,6 @@ module.exports = eva => {
   `, 30);
 
   test(eva, `
-    (class Point null
-      (begin
-        (def constructor (this x y)
-          (begin
-            (set (prop this x) x)
-            (set (prop this y) y)
-          )
-        )
-        (def calc (this)
-          (+ (prop this x) (prop this y))
-        )
-      )
-    )
     (class Point3D Point
       (begin
         (def constructor (this x y z)
