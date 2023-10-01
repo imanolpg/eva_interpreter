@@ -1,4 +1,3 @@
-const assert = require('assert');
 const Environment = require('./Environment');
 const Transformer = require('./transform/Transformer');
 
@@ -13,6 +12,18 @@ class Eva {
   constructor(global = GlobalEnvironment) {
     this.global = global;
     this._transformer = new Transformer();
+  }
+
+  /**
+   * Evaluates global code wrapping into a block
+   * @param {*} expressions 
+   * @returns 
+   */
+  evalGlobal(expressions) {
+    return this._evalBlock(
+      ['block', expressions],
+      this.global
+    );
   }
 
   /**
@@ -139,7 +150,7 @@ class Eva {
     if (exp[0] === 'class') {
       const [_tag, name, parent, body] = exp;
 
-      // get a parent environment for inheritance 
+      // get a parent environment for inheritance
       const parentEnv = this.eval(parent, env) || env;
 
       // create the new class with the corresponding parent env
@@ -147,6 +158,13 @@ class Eva {
       this._evalBody(body, classEnv);
       
       return env.define(name, classEnv);
+    }
+
+    // --------------------------------------------
+    // Super expression
+    if (exp[0] === 'super') {
+      const [_tag, className] = exp;
+      return this.eval(className, env).parent;
     }
 
     // --------------------------------------------
@@ -293,7 +311,7 @@ const GlobalEnvironment = new Environment({
   print(...args) {
     console.log(...args);
   }
-})
+});
 
 
 module.exports = Eva;
