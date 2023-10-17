@@ -96,7 +96,7 @@ In this example a class Point has been defined with a constructor `constructor (
 
 In order to create a new instance of the class, the following syntax is used:
 
-`(var bar (new Point 10 20))`.
+`(var bar (new Point 10 20))`
 
 **Inheritance** is also supported. Class inheritance is a mechanism that allows you to create new classes that are based on existing classes. It can be done this way:
 ```
